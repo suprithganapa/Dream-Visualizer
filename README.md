@@ -173,21 +173,38 @@ Open http://localhost:8501. The **Demo Session** tab loads a pre-built overnight
 - `data/demo_upload_X.npy` + `data/demo_upload_y.npy` — 300 epochs, real Sleep-EDF
 - `data/hardware_session_X.npy` + `data/hardware_session_y.npy` — 572 epochs, simulated headband recording
 
-### 4. Connect your headband (live mode)
+### 4. Flash Chords firmware to Arduino
+
+Download and open in Arduino IDE:
 ```
-Arduino Uno R4 Minima  →  USB  →  PC
-BioAmp EXG Pill        →  Breadboard  →  Arduino A0 / A1
-Electrodes: Fpz (forehead), Pz (crown back), GND (earlobe)
+https://github.com/upsidedownlabs/Chords-Arduino-Firmware/blob/main/UNO-R4/UNO-R4.ino
 ```
+- Board: **Arduino UNO R4 Minima** · Port: your COM port · Click **Upload**
+- Verify in Serial Monitor (230400 baud) — you should see a stream of numbers
+
+> The dashboard automatically sends the `START` command when it connects — no manual steps needed.
+
+### 5. Connect your headband (live mode)
+
+Wire the BioAmp EXG Pill:
+```
+EXG Pill VCC  →  Arduino 3.3V
+EXG Pill GND  →  Arduino GND
+EXG Pill OUT  →  Arduino A0
+```
+Place electrodes: **Fpz** (forehead), **GND** (earlobe). Close Arduino IDE Serial Monitor before starting.
+
 **Upload File** tab → **🧠 Live EEG Monitor** → select COM port → **▶ Start Live Monitor**
 
-The rolling waveform appears and the current sleep stage updates every 1.5 seconds.
+Wait ~3 seconds for Arduino boot. The rolling waveform appears and current sleep stage updates every 1.5 s.
 
-### 5. Record overnight sleep
+### 6. Record overnight sleep
 **Upload File** tab → **😴 Sleep Recording** → select COM port → **😴 Start Sleep Recording**
 
-Put on the headband and sleep. Raw EEG saves to disk every second — the browser can be closed.  
+Put on the headband and sleep. Raw EEG saves to disk continuously — the browser can be closed.  
 In the morning: **⏹ Stop & Generate Files** → download `sleep_X.npy` + `sleep_y.npy` → full overnight report renders automatically.
+
+> Minimum recording time for processing: **30 seconds** (one epoch). Overnight recordings produce ~150–300 epochs.
 
 ### 6. Train your own models (optional)
 ```bash
